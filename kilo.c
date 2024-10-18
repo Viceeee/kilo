@@ -889,6 +889,7 @@ void editorRefreshScreen(void) {
 
     abAppend(&ab,"\x1b[?25l",6); /* Hide cursor. */
     abAppend(&ab,"\x1b[H",3); /* Go home. */
+	//\x1b[为转义序列，每个都有固定的意义
     for (y = 0; y < E.screenrows; y++) {
         int filerow = E.rowoff+y;
 
