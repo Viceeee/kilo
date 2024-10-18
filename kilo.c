@@ -220,7 +220,9 @@ int enableRawMode(int fd) {
 
     if (E.rawmode) return 0; /* Already enabled. */
     if (!isatty(STDIN_FILENO)) goto fatal;
+    //if not fd return fail
     atexit(editorAtExit);
+    //程序终止时调用
     if (tcgetattr(fd,&orig_termios) == -1) goto fatal;
 
     raw = orig_termios;  /* modify the original mode */
