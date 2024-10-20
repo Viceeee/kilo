@@ -571,8 +571,9 @@ void editorUpdateRow(erow *row) {
         printf("Some line of the edited file is too long for kilo\n");
         exit(1);
     }
-
-    row->render = malloc(row->size + tabs*8 + nonprint*9 + 1);
+   // row->render = malloc(row->size + tabs*8 + nonprint*9 + 1);
+    row->render = malloc(allocsize);
+	//确定了这个allocsize不超过UINT32_MAX 后在对内存进行申请
     idx = 0;
     for (j = 0; j < row->size; j++) {
         if (row->chars[j] == TAB) {
@@ -882,6 +883,7 @@ void abFree(struct abuf *ab) {
 /* This function writes the whole screen using VT100 escape characters
  * starting from the logical state of the editor in the global state 'E'. */
 void editorRefreshScreen(void) {
+	//刷新屏幕的函数其实就是定义了状态栏以及光标的位置
     int y;
     erow *r;
     char buf[32];
