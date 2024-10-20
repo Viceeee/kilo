@@ -956,13 +956,18 @@ void editorRefreshScreen(void) {
     /* Create a two rows status. First row: */
     abAppend(&ab,"\x1b[0K",4);
     abAppend(&ab,"\x1b[7m",4);
+    //创建两行，第一行为设置光标到行尾并且设置其颜色为翻转色，使其更加突出光标的位置
     char status[80], rstatus[80];
     int len = snprintf(status, sizeof(status), "%.20s - %d lines %s",
         E.filename, E.numrows, E.dirty ? "(modified)" : "");
+	//snprintf返回的是否完整的被写入了缓冲区
     int rlen = snprintf(rstatus, sizeof(rstatus),
         "%d/%d",E.rowoff+E.cy+1,E.numrows);
-    if (len > E.screencols) len = E.screencols;
-    abAppend(&ab,status,len);
+    //显示指针的位置
+	if (len > E.screencols) len = E.screencols;
+	abAppend(&ab,status,len);
+	//如果大于，则需要使用memcpy复制其到缓冲区
+	//没有更新么？使用do while会不会更好一点
     while(len < E.screencols) {
         if (E.screencols - len == rlen) {
             abAppend(&ab,rstatus,rlen);
@@ -970,10 +975,12 @@ void editorRefreshScreen(void) {
         } else {
             abAppend(&ab," ",1);
             len++;
+			//重新申请内存，每次增加1，直到指针刚刚好等于缓冲区的数量
         }
     }
+	//在循环中，只处理了len < E.screencols的情况，主要意思就是,等待光标信息，终止循环
     abAppend(&ab,"\x1b[0m\r\n",6);
-
+	//确定第一行的状态属性
     /* Second row depends on E.statusmsg and the status message update time. */
     abAppend(&ab,"\x1b[0K",4);
     int msglen = strlen(E.statusmsg);
